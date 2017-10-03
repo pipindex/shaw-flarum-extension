@@ -13,7 +13,7 @@ return function (Dispatcher $events) {
                 __DIR__ . '/js/forum/dist/extension.js',
                 __DIR__ . '/less/forum/extension.less',
             ]);
-            $event->addBootstrapper('pipindex/shawTheme/main');
+            $event->addBootstrapper('pipindex/shaw-flarum-extension/main');
         }
     });
 };
