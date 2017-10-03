@@ -19,10 +19,10 @@ import humanTime from 'flarum/helpers/humanTime';
 import icon from 'flarum/helpers/icon';
 import avatar from 'flarum/helpers/avatar';
 import username from 'flarum/helpers/username';
-import listInline from 'romanzpolski/shawTheme/listInline';
+import listInline from 'pipindex/shaw-flarum-extension/listInline';
 
 
-app.initializers.add('romanzpolski/shawTheme', app => {
+app.initializers.add('pipindex/shaw-flarum-extension', app => {
 
 
 

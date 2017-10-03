@@ -2,7 +2,7 @@ var flarum = require('flarum-gulp');
 
 flarum({
     modules: {
-        'romanzpolski/shawTheme': [
+        'pipindex/shaw-flarum-extension': [
             'src/**/*.js'
         ]
     }

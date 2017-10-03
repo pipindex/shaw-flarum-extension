@@ -13,7 +13,7 @@ return function (Dispatcher $events) {
                 __DIR__ . '/js/forum/dist/extension.js',
                 __DIR__ . '/less/forum/extension.less',
             ]);
-            $event->addBootstrapper('romanzpolski/shawTheme/main');
+            $event->addBootstrapper('pipindex/shawTheme/main');
         }
     });
 };
