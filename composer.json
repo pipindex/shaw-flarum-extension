@@ -10,7 +10,7 @@
       }
   ],  
   "require": {
-    "pipindex/core": "master"
+    "flarum/core": "master"
   },
   "extra": {
     "flarum-extension": {
