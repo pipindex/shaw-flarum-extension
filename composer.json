@@ -3,14 +3,8 @@
   "title": "Shaw Academy",
   "description": "Custom Theme for Shaw Academy",
   "type": "flarum-extension",
-  "repositories": [
-      {
-          "type": "vcs",
-          "url": "https://github.com/pipindex/core"
-      }
-  ],  
   "require": {
-    "flarum/core": "master"
+    "flarum/core": "v0.1.0-beta.7"
   },
   "extra": {
     "flarum-extension": {
