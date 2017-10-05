@@ -1,8 +1,8 @@
 // ---------------------------------
 // CONFIG
 
-@config-primary-color:             #4EA1CA;
-@config-secondary-color:           #4EA1CA;
+@config-primary-color:             #47B5F7;
+@config-secondary-color:           #47B5F7;
 @config-dark-mode:                 false;
 @config-colored-header:            false;
 
@@ -18,6 +18,8 @@
 // Derive the primary/secondary colors from the config variables. In dark mode,
 // we make the user-set colors a bit darker, otherwise they will stand out too
 // much.
+
+@placeholderText:                  #ff0000;
 
 @color:                            #000;
 .placeholder(@color: @placeholderText) {
@@ -37,7 +39,7 @@
   @primary-color:                  @config-primary-color;
   @secondary-color:                @config-secondary-color;
 
-  @body-bg:                        #fff;
+  @body-bg:                        #F0F4F7;
   @text-color:                     #111;
   @link-color:                     saturate(@primary-color, 10%);
   @heading-color:                  @text-color;
@@ -93,10 +95,10 @@
 
 .define-header(@config-colored-header);
 .define-header(false) {
-  @header-bg:                      #4FA4CE;
-  @header-color:                   #fff;
-  @header-control-bg:              @muted-color;
-  @header-control-color:           #000;
+  @header-bg:                      #fff;
+  @header-color:                   #47B5F7;
+  @header-control-bg:              #47B5F7;
+  @header-control-color:           #47B5F7;
 }
 .define-header(true) {
   @header-bg:                      #fff;
@@ -114,7 +116,7 @@
 @header-height:                    66px;
 @header-height-phone:              46px;
 
-@border-radius:                    0px;
+@border-radius:                    5px;
 
 @zindex-header:                    1000;
 @zindex-pane:                      1010;
@@ -149,7 +151,7 @@
 // ---------------------------------
 // COMPONENTS
 
-@tooltip-bg:                       rgba(0, 0, 0, 0.9);
+@tooltip-bg:                       #47B5F7;
 @tooltip-color:                    #fff;
 
 @online-user-circle-color:         #7FBA00;
@@ -157,7 +159,7 @@
 // ---- end vars --- start mixinis
 
 .header-background() {
-  box-shadow: 0px 0px 25px rgba(0,0,0,0.5);
+  box-shadow: none;
 }
 
 // --------
@@ -229,20 +231,37 @@ body .SessionDropdown .Dropdown-toggle {
     display: inline-block;
   }
 }
+.fakeHeaderNav {
+  background-color: #fff;
+  .Button {
+    background-color: #fff;
+    border-radius: 0px;
+    border-bottom: 2px solid #fff;
+    &[active="true"] {
+      border-bottom: 2px solid #4EB6F5;
+      i {
+        display: none;
+      }
+    }
+  }
+}
+.App-content {
+  border-top: none;
+}
 .viewNavInline {
   .listInline {
     padding: 0px;
     list-style: none;
     > li {
       display: inline-block;
-      margin: 0px 5px 5px 0px;
+      margin: 0px 15px 0px 0px;
     }
   }
 }
 #header {
   #header-navigation {
     a.Button.Navigation-back {
-      background: #4995ba;
+      background: #47B5F7;
       color: @header-button-color;
     }
   }
@@ -251,8 +270,8 @@ body .SessionDropdown .Dropdown-toggle {
       color: #fff;
     }
     input.FormControl {
-      background: #4995ba;
-      color: @header-button-color;
+      background: #fafafa;
+      color: #47B5F7;
     }
     .item-flags, .item-notifications {
       &:hover {
@@ -261,9 +280,9 @@ body .SessionDropdown .Dropdown-toggle {
     }
     .Button {
       background: transparent;
-      color: #edf6fa;
+      color: #47B5F7;
       &:hover {
-        background: #4995ba;
+        background: #fff;
       }
     }
     img.Avatar {
@@ -271,5 +290,123 @@ body .SessionDropdown .Dropdown-toggle {
     }
   }
 }
+.DiscussionListItem {
+  background: #fff;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  position: relative;
+  &:hover {
+    background-color: #fff;
+  }
+  .DiscussionListItem-badges {
+    float: none;
+    position: absolute;
+    top:-20px;
+    right:-40px;
+    margin-top: 0px;
+    text-align: none;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .Badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    line-height: 21px;
+    color: #fff;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+    .Badge-icon {
+      font-size: 25px;
+      transform: rotate(30deg);
+      margin-top: 8px;
+    }
+    &.Badge--sticky {
+      background: #47B5F7;
+    }
+  }
+  li.item-tags, li.item-excerpt {
+    display: none;
+  }
+  .postedBy {
+    padding: 15px 0px 0.5em;
+    font-size: 12px;
+    color: #ddd;
+    margin: 0px;
+  }
+  .DiscussionListItem-main {
+    padding: 0px;
+    margin: 0px;
+    h3.DiscussionListItem-title {
+      font-size: 20px;
+      color: #000;
+    }
+  }
+}
+@media (min-width: 992px) {
+  .sideNav {
+    float: right;
+    > ul {
+      width: 190px;
+    }
+  }
+  .sideNavOffset {
+    margin-top: 30px;
+    margin-left: 0px;
+    margin-right: 240px;
+  }
+}
+
+.DiscussionListItem-bottomMeta {
+  border-top: 1px solid #F0F4F7;
+  font-size: 11px;
+  padding-bottom: 15px;
+  padding-top: 15px;
+  margin-left: -15px;
+  margin-right: -25px;
+  .DiscussionListItem-count {
+    float: none;
+    margin-top: 12px;
+    text-decoration: none;
+  }
+  @media (min-width: 768px) {
+    .DiscussionListItem-count {
+      margin-top: 21px;
+      margin-right: 0px;
+      width: auto;
+      color: #999;
+      font-size: 11px;
+      padding-left: 15px;
+      &:before {
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        content: "\f0e5";
+        float: none;
+        margin-left: 5px;
+        margin-right: 1em;
+        margin-top: 3px;
+      }
+    }
+    .DiscussionListItem-controls {
+      position: relative;
+      right: 30px;
+      top: -8px;
+      z-index: 1;
+      opacity: 0.5;
+      transition: opacity .2s;
+      float: right;
+    }
+  }
+}
+
+
+
 
 
