@@ -3,26 +3,38 @@ import app from 'flarum/app';
 import Post from 'flarum/components/Post';
 import Component from 'flarum/Component';
 import Page from 'flarum/components/Page';
+import TerminalPost from 'flarum/components/TerminalPost';
 import HeaderSecondary from 'flarum/components/HeaderSecondary';
+import HeaderPrimary from 'flarum/components/HeaderPrimary';
 import SessionDropdown from 'flarum/components/SessionDropdown';
 import Dropdown from 'flarum/components/Dropdown';
+import DiscussionControls from 'flarum/utils/DiscussionControls';
+import DiscussionListItem from 'flarum/components/DiscussionListItem';
 import IndexPage from 'flarum/components/IndexPage';
 import listItems from 'flarum/helpers/listItems';
 import ItemList from 'flarum/utils/ItemList';
 import Button from 'flarum/components/Button';
+import highlight from 'flarum/helpers/highlight';
 import LinkButton from 'flarum/components/LinkButton';
+import extractText from 'flarum/utils/extractText';
+import abbreviateNumber from 'flarum/utils/abbreviateNumber';
+import AddHotnessFilter from 'Reflar/gamification/components/AddHotnessSort'
 import SelectDropdown from 'flarum/components/SelectDropdown';
 import tagLabel from 'flarum/tags/helpers/tagLabel';
-import sortTags from 'flarum/tags/utils/sortTags';
 import TagsPage from 'flarum/tags/components/TagsPage';
 import humanTime from 'flarum/helpers/humanTime';
 import icon from 'flarum/helpers/icon';
 import avatar from 'flarum/helpers/avatar';
 import username from 'flarum/helpers/username';
+import tagsLabel from 'flarum/tags/helpers/tagsLabel';
+import sortTags from 'flarum/tags/utils/sortTags';
+import { truncate } from 'flarum/utils/string';
 import listInline from 'pipindex/shaw-flarum-extension/listInline';
 
 
+
 app.initializers.add('pipindex/shaw-flarum-extension', app => {
+
 
 
 
@@ -36,8 +48,6 @@ app.initializers.add('pipindex/shaw-flarum-extension', app => {
         ];
     };
 
-
-
     IndexPage.prototype.viewItems = function(){
         const items = new ItemList();
         const sortMap = app.cache.discussionList.sortMap();
@@ -46,7 +56,7 @@ app.initializers.add('pipindex/shaw-flarum-extension', app => {
         for (const i in sortMap) {
             sortOptions[i] = app.translator.trans('core.forum.index_sort.' + i + '_button');
         }
-
+        
         items.add('sort',
         listInline.component({
                 buttonClassName: 'Button',
@@ -69,7 +79,6 @@ app.initializers.add('pipindex/shaw-flarum-extension', app => {
 
         return items;
     };
-
 
     IndexPage.prototype.sidebarItems = function() {
         const items = new ItemList();
@@ -95,7 +104,6 @@ app.initializers.add('pipindex/shaw-flarum-extension', app => {
         );
         return items;
     };
-
 
     TagsPage.prototype.view = function() {
         const pinned = this.tags.filter(tag => tag.position() !== null);
@@ -171,25 +179,19 @@ app.initializers.add('pipindex/shaw-flarum-extension', app => {
         );
     };
 
-
-
-
     IndexPage.prototype.view = function() {
-        //console.log(this.sidebarItems().toArray());
-        console.log(this.viewItems().toArray());
         return (
             <div className="IndexPage">
-                {this.hero()}
+                <div className="row fakeHeaderNav">
+                    <div className="container">
+                    <ul className="IndexPage-toolbar-view">{listItems(this.viewItems().toArray())}</ul>
+                    </div>
+                </div>
                 <div className="container">
                     <nav className="IndexPage-nav sideNav">
                         <ul>{listItems(this.sidebarItems().toArray())}</ul>
                     </nav>
-
                     <div className="IndexPage-results sideNavOffset">
-                        <div className="IndexPage-toolbar">
-                            <ul className="IndexPage-toolbar-view kutas">{listItems(this.viewItems().toArray())}</ul>
-                            <ul className="IndexPage-toolbar-action">{listItems(this.actionItems().toArray())}</ul>
-                        </div>
                         {app.cache.discussionList.render()}
                     </div>
                 </div>
@@ -197,8 +199,83 @@ app.initializers.add('pipindex/shaw-flarum-extension', app => {
         );
     };
 
-/*    extend(Post.prototype, 'view', function(vdom) {
-//        vdom.children.push('<div class="kutas"><p>this is some stuff to add after each post</p></div>');
-        vdom.attrs.style = 'background-color: #fafafa; border-bottom: 1px solid #000';
-    });*/
+    HeaderSecondary.prototype.view = function() {
+        return (
+            <ul className="Header-controls">
+            {listItems(this.items().toArray())}
+            </ul>
+        );
+    }
+
+
+    DiscussionListItem.prototype.view = function () {
+            const retain = this.subtree.retain();
+
+            if (retain) return retain;
+            const discussion = this.props.discussion;
+            const startPost = discussion.startPost();
+            const excerpt = <span>{truncate(startPost.contentPlain(), 200)}</span>;
+            const startUser = discussion.startUser();
+            const isUnread = discussion.isUnread();
+            const isRead = discussion.isRead();
+            const showUnread = !this.showRepliesCount() && isUnread;
+            const jumpTo = Math.min(discussion.lastPostNumber(), (discussion.readNumber() || 0) + 1);
+            const relevantPosts = this.props.params.q ? discussion.relevantPosts() : [];
+            const controls = DiscussionControls.controls(discussion, this).toArray();
+            const attrs = this.attrs();
+            const lastPost = !this.showStartPost();
+            const user = discussion[lastPost ? 'lastUser' : 'startUser']();
+            const time = discussion[lastPost ? 'lastTime' : 'startTime']();
+            const tags = this.props.discussion.tags();
+
+            //console.log(discussion);
+            return (
+                <div {...attrs}>
+                    <a className={'Slidable-underneath Slidable-underneath--left Slidable-underneath--elastic' + (isUnread ? '' : ' disabled')}
+                        onclick={this.markAsRead.bind(this)}>
+                        {icon('check')}
+                    </a>
+
+                        <div className={'DiscussionListItem-content Slidable-content' + (isUnread ? ' unread' : '') + (isRead ? ' read' : '')}>
+                            <ul className="DiscussionListItem-badges badges">
+                            {listItems(discussion.badges().toArray())}
+                            </ul>
+                            <a href={startUser ? app.route.user(startUser) : '#'}
+                                className="DiscussionListItem-author"
+                                title={extractText(app.translator.trans('core.forum.discussion_list.started_text', {user: startUser, ago: humanTime(discussion.startTime())}))}
+                                config={function(element) {
+                                        $(element).tooltip({placement: 'right'});
+                                        m.route.apply(this, arguments);
+                                    }}>{avatar(startUser, {title: ''})}</a>
+                            <p className="postedBy">Posted by {startUser.data.attributes.displayName}</p>
+                            <a href={app.route.discussion(discussion, jumpTo)}
+                            config={m.route}
+                            className="DiscussionListItem-main">
+                                <h3 className="DiscussionListItem-title">{highlight(discussion.title(), this.props.params.q)}</h3>
+                            </a>
+                            <p className="ListDiscussion-excerpt">{excerpt} <a href={app.route.discussion(discussion, jumpTo)}>(more)</a></p>
+                            {relevantPosts && relevantPosts.length
+                                ? <div className="DiscussionListItem-relevantPosts">
+                                {relevantPosts.map(post => PostPreview.component({post, highlight: this.props.params.q}))}
+                            </div>
+                            : ''}
+
+                         </div>
+                        <div className="row DiscussionListItem-bottomMeta">
+                            <span className="DiscussionListItem-count"
+                                onclick={this.markAsRead.bind(this)}
+                                title={showUnread ? app.translator.trans('core.forum.discussion_list.mark_as_read_tooltip') : ''}>
+                                {abbreviateNumber(discussion[showUnread ? 'unreadCount' : 'repliesCount']())} answers | last updated {humanTime(time)}
+                            </span> &nbsp;
+                                <span className="tags">{tagsLabel(tags)} </span>
+                                {controls.length ? Dropdown.component({
+                                    icon: 'ellipsis-h',
+                                    children: controls,
+                                    className: 'DiscussionListItem-controls',
+                                    buttonClassName: 'Button Button--icon Button--flat Slidable-underneath Slidable-underneath--right'
+                                }) : ''}
+                        </div>
+                    </div>
+        );
+    }
 });
