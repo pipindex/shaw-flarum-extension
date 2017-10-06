@@ -18,7 +18,6 @@ import highlight from 'flarum/helpers/highlight';
 import LinkButton from 'flarum/components/LinkButton';
 import extractText from 'flarum/utils/extractText';
 import abbreviateNumber from 'flarum/utils/abbreviateNumber';
-import AddHotnessFilter from 'Reflar/gamification/components/AddHotnessSort'
 import SelectDropdown from 'flarum/components/SelectDropdown';
 import tagLabel from 'flarum/tags/helpers/tagLabel';
 import TagsPage from 'flarum/tags/components/TagsPage';
